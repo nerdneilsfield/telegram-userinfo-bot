@@ -1,6 +1,6 @@
 # ------------ Stage 1: Build ------------
 # Use an official Go image with Alpine Linux. Choose a specific Go version.
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 # Install build tools and UPX for compression
 # git might be needed if you have private go modules or specific dependencies
