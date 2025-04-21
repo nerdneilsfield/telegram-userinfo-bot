@@ -77,6 +77,7 @@ Replace `<YOUR_BOT_TOKEN>` with your actual Telegram Bot Token.
 Create a `docker-compose.yml` file:
 
 * **Basic (Docker Hub):**
+
     ```yaml
     services:
       userinfo-bot:
@@ -88,6 +89,7 @@ Create a `docker-compose.yml` file:
     ```
 
 * **Basic (GHCR):**
+
     ```yaml
     services:
       userinfo-bot:
@@ -99,8 +101,8 @@ Create a `docker-compose.yml` file:
     ```
 
 * **(Optional) With HTTPS Proxy (Docker Hub):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: nerdneils/telegram-userinfo-bot
@@ -112,8 +114,8 @@ Create a `docker-compose.yml` file:
     ```
 
 * **(Optional) With HTTPS Proxy (GHCR):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: ghcr.io/nerdneilsfield/telegram-userinfo-bot
@@ -127,6 +129,7 @@ Create a `docker-compose.yml` file:
 Replace `<YOUR_BOT_TOKEN>` and (optionally) `<YOUR_PROXY_URL>` with your actual values.
 
 Then run:
+
 ```bash
 docker-compose up -d
 ```
@@ -143,9 +146,17 @@ docker-compose up -d
 2. Set environment variables:
 
     ```bash
+    # Linux/macOS for bash or zsh
     export TELEGRAM_BOT_TOKEN=<YOUR_BOT_TOKEN>
     # Optional:
     # export HTTPS_PROXY=<YOUR_PROXY_URL>
+    ```
+
+    ```powershell
+    # PowerShell
+    $env:TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
+    # Optional:
+    $env:HTTPS_PROXY="<YOUR_PROXY_URL>"
     ```
 
 3. Build and run:
@@ -231,8 +242,8 @@ docker-compose up -d
 创建一个 `docker-compose.yml` 文件：
 
 * **基础 (Docker Hub):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: nerdneils/telegram-userinfo-bot
@@ -243,8 +254,8 @@ docker-compose up -d
     ```
 
 * **基础 (GHCR):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: ghcr.io/nerdneilsfield/telegram-userinfo-bot
@@ -255,8 +266,8 @@ docker-compose up -d
     ```
 
 * **(可选) 使用 HTTPS 代理 (Docker Hub):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: nerdneils/telegram-userinfo-bot
@@ -268,8 +279,8 @@ docker-compose up -d
     ```
 
 * **(可选) 使用 HTTPS 代理 (GHCR):**
+
     ```yaml
-    version: '3.8'
     services:
       userinfo-bot:
         image: ghcr.io/nerdneilsfield/telegram-userinfo-bot
@@ -283,6 +294,7 @@ docker-compose up -d
 将 `<YOUR_BOT_TOKEN>` 和（可选的）`<YOUR_PROXY_URL>` 替换为你的实际值。
 
 然后运行：
+
 ```bash
 docker-compose up -d
 ```
@@ -299,9 +311,17 @@ docker-compose up -d
 2. 设置环境变量：
 
     ```bash
+    # Linux/macOS for bash 或 zsh
     export TELEGRAM_BOT_TOKEN=<YOUR_BOT_TOKEN>
     # 可选:
     # export HTTPS_PROXY=<YOUR_PROXY_URL>
+    ```
+
+    ```powershell
+    # PowerShell
+    $env:TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
+    # 可选:
+    $env:HTTPS_PROXY="<YOUR_PROXY_URL>"
     ```
 
 3. 构建并运行：
