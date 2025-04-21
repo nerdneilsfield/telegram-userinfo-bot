@@ -23,3 +23,16 @@ go.work.sum
 
 # env file
 .env
+
+telegram-userinfo-bot
+telegram-userinfo-bot.exe
+telegram-userinfo-bot.exe~
+telegram-userinfo-bot.dll
+telegram-userinfo-bot.dylib
+telegram-userinfo-bot.test
+telegram-userinfo-bot.out
+.cache/
+.vscode/
+.idea/
+
+
