@@ -27,7 +27,7 @@ RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /app/telegram-userinfo-bot .
 # Compress the binary using UPX for maximum size reduction
 # --best uses more time for potentially better compression
 # --lzma often provides good results
-RUN upx --best --lzma /app/telegram-userinfo-bot
+RUN upx --best --lzma -o /app/telegram-userinfo-bot-compressed /app/telegram-userinfo-bot
 
 # ------------ Stage 2: Runtime ------------
 # Use a minimal base image like Alpine.
@@ -42,7 +42,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Copy only the compressed, static binary from the builder stage
-COPY --from=builder /app/telegram-userinfo-bot /app/telegram-userinfo-bot
+COPY --from=builder /app/telegram-userinfo-bot-compressed /app/telegram-userinfo-bot
 
 # Alpine includes CA certificates at /etc/ssl/certs/ca-certificates.crt
 # If you were using 'scratch' as a base, you would need to copy them:
