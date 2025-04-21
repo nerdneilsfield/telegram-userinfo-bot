@@ -1,6 +1,6 @@
 module github.com/nerdneilsfield/telegram-userinfo-bot
 
-go 1.24.2
+go 1.21.0
 
 require (
 	github.com/mymmrac/telego v1.0.2
