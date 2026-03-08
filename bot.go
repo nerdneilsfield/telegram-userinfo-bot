@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"syscall"
 
@@ -17,6 +16,28 @@ import (
 	"github.com/valyala/fasthttp/fasthttpproxy"
 	// "github.com/mymmrac/telego/telegoext" // Optional, for more convenient handlers / 可选，用于更方便的 handler
 )
+
+// mdEscape escapes special characters for Telegram MarkdownV2.
+// mdEscape 转义 Telegram MarkdownV2 的特殊字符。
+func mdEscape(s string) string {
+	replacer := strings.NewReplacer(
+		`_`, `\_`, `*`, `\*`, `[`, `\[`, `]`, `\]`,
+		`(`, `\(`, `)`, `\)`, `~`, `\~`, "`", "\\`",
+		`>`, `\>`, `#`, `\#`, `+`, `\+`, `-`, `\-`,
+		`=`, `\=`, `|`, `\|`, `{`, `\{`, `}`, `\}`,
+		`.`, `\.`, `!`, `\!`,
+	)
+	return replacer.Replace(s)
+}
+
+// boolEmoji converts a bool to a checkmark or cross emoji.
+// boolEmoji 将布尔值转换为对勾或叉号 emoji。
+func boolEmoji(b bool) string {
+	if b {
+		return "✅"
+	}
+	return "❌"
+}
 
 // main is the entry point of the application.
 // main 是应用程序的入口点。
@@ -124,58 +145,58 @@ func main() {
 		}
 
 		chat := message.Chat
-		chatInfo := fmt.Sprintf("--- Chat Information (telego) / 聊天信息 (telego) ---\n"+
-			"Type / 类型: %s\n"+
-			"ID: %d\n"+
-			"Title / 标题: %s\n"+
-			"Username / 用户名: @%s\n"+
-			"Is Forum/Topics Enabled / 是否启用话题: %s\n",
-			chat.Type,
+
+		// 构建 Chat 信息块（MarkdownV2 格式）
+		usernameStr := ""
+		if chat.Username != "" {
+			usernameStr = fmt.Sprintf("\nUsername: @%s", mdEscape(chat.Username))
+		}
+		chatInfo := fmt.Sprintf("💬 *Chat Info*\nType: `%s`\nID: `%d`\nTitle: %s%s\nForum: %s",
+			mdEscape(string(chat.Type)),
 			chat.ID,
-			chat.Title,
-			chat.Username,
-			strconv.FormatBool(chat.IsForum),
+			mdEscape(chat.Title),
+			usernameStr,
+			boolEmoji(chat.IsForum),
 		)
 
+		// 构建 Topic 信息块
 		topicInfo := ""
 		if message.IsTopicMessage || (chat.IsForum && message.MessageThreadID != 0) {
-			topicInfo = fmt.Sprintf("\n--- Topic Info / 话题信息 ---\n"+
-				"Is Topic Message / 是否在话题内: %s\n"+
-				"Thread ID / 话题 ID: %d\n"+
-				"Note: Topic name needs to be obtained through other means. / 注意：话题名称需通过其他方式获取。\n",
-				strconv.FormatBool(message.IsTopicMessage),
+			topicInfo = fmt.Sprintf("\n\n📌 *Topic Info*\nThread ID: `%d`",
 				message.MessageThreadID,
 			)
 		}
 
+		// 构建 User 信息块
 		user := message.From
 		userInfo := ""
 		if user != nil {
-			userInfo = fmt.Sprintf("\n--- Sender Information / 发起用户信息 ---\n"+
-				"User ID / 用户 ID: %d\n"+
-				"First Name / 名字: %s\n"+
-				"Last Name / 姓氏: %s\n"+
-				"Username / 用户名: @%s\n"+
-				"Is Bot / 是否机器人: %s\n"+
-				"Language Code / 语言代码: %s\n",
+			fullName := strings.TrimSpace(user.FirstName + " " + user.LastName)
+			senderUsername := ""
+			if user.Username != "" {
+				senderUsername = fmt.Sprintf("\nUsername: @%s", mdEscape(user.Username))
+			}
+			langStr := ""
+			if user.LanguageCode != "" {
+				langStr = fmt.Sprintf("\nLang: `%s`", mdEscape(user.LanguageCode))
+			}
+			userInfo = fmt.Sprintf("\n\n👤 *Sender Info*\nName: %s\nID: `%d`%s\nBot: %s%s",
+				mdEscape(fullName),
 				user.ID,
-				user.FirstName,
-				user.LastName,
-				user.Username,
-				strconv.FormatBool(user.IsBot),
-				user.LanguageCode,
+				senderUsername,
+				boolEmoji(user.IsBot),
+				langStr,
 			)
 		} else {
-			userInfo = "\n--- Sender Information / 发起用户信息 ---\n" +
-				"Cannot get user information (possibly anonymous admin or channel message) / " +
-				"无法获取用户信息 (可能是匿名管理员或频道消息)\n"
+			userInfo = "\n\n👤 *Sender Info*\n_Cannot get user info \\(anonymous admin or channel\\)_"
 		}
 
 		responseText := chatInfo + topicInfo + userInfo
 
 		params := &telego.SendMessageParams{
-			ChatID: telego.ChatID{ID: chat.ID},
-			Text:   responseText,
+			ChatID:    telego.ChatID{ID: chat.ID},
+			Text:      responseText,
+			ParseMode: telego.ModeMarkdownV2,
 		}
 
 		if message.IsTopicMessage || (chat.IsForum && message.MessageThreadID != 0) {
